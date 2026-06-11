@@ -1021,9 +1021,95 @@
 
     .cta-section h2 { font-size: clamp(2.2rem, 9vw, 3.5rem); }
   }
+
+  /* SPLASH SCREEN */
+  #splash {
+    position: fixed;
+    inset: 0;
+    z-index: 9000;
+    background: var(--black);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    cursor: pointer;
+    transition: opacity 0.8s ease, visibility 0.8s ease;
+  }
+  #splash.hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+  #splash .splash-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.8rem, 8vw, 6rem);
+    font-weight: 900;
+    background: linear-gradient(135deg, var(--cream) 0%, var(--gold) 40%, var(--amber) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: -0.02em;
+    line-height: 1;
+    text-align: center;
+  }
+  #splash .splash-logo em {
+    display: block;
+    font-style: italic;
+    font-size: 0.55em;
+    -webkit-text-fill-color: var(--amber);
+    background: none;
+    letter-spacing: 0.08em;
+    margin-top: 6px;
+  }
+  #splash .splash-line {
+    width: 1px;
+    height: 60px;
+    background: linear-gradient(to bottom, var(--amber), transparent);
+    margin: 40px 0 36px;
+    animation: splashLine 2s ease-in-out infinite;
+  }
+  @keyframes splashLine {
+    0%, 100% { opacity: 0.4; transform: scaleY(1); }
+    50% { opacity: 1; transform: scaleY(1.15); }
+  }
+  #splash .splash-enter {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.5em;
+    text-transform: uppercase;
+    color: var(--amber);
+    animation: splashPulse 2.5s ease-in-out infinite;
+  }
+  @keyframes splashPulse {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 1; }
+  }
+  #splash .splash-note {
+    position: absolute;
+    font-size: 12rem;
+    color: var(--amber);
+    opacity: 0.04;
+    font-family: serif;
+    user-select: none;
+  }
+  #splash .splash-note:nth-child(1) { top: 10%; left: 8%; }
+  #splash .splash-note:nth-child(2) { bottom: 10%; right: 8%; font-size: 9rem; }
 </style>
 </head>
 <body>
+
+<!-- SPLASH SCREEN -->
+<div id="splash">
+  <span class="splash-note">♪</span>
+  <span class="splash-note">♫</span>
+  <div class="splash-logo">
+    José
+    <em>Trío Jazz</em>
+  </div>
+  <div class="splash-line"></div>
+  <p class="splash-enter">Toca para entrar</p>
+</div>
 
 <div class="cursor" id="cursor"></div>
 <div class="cursor-ring" id="cursorRing"></div>
@@ -1345,10 +1431,7 @@
     });
   }
 
-  // Try autoplay immediately on page load
-  window.addEventListener('load', () => {
-    startMusic();
-  });
+
 
   function toggleMusic() {
     if (!musicStarted) { startMusic(); return; }
@@ -1370,16 +1453,18 @@
     btn.title = playing ? 'Pausar música' : 'Reproducir música';
   }
 
-  // Start on first interaction
-  function onFirstInteraction() {
+  // Splash screen — click to enter and start music
+  const splash = document.getElementById('splash');
+  function dismissSplash() {
+    splash.classList.add('hidden');
     startMusic();
-    document.removeEventListener('click', onFirstInteraction);
-    document.removeEventListener('touchstart', onFirstInteraction);
-    document.removeEventListener('keydown', onFirstInteraction);
+    splash.removeEventListener('click', dismissSplash);
+    splash.removeEventListener('touchstart', dismissSplash);
   }
-  document.addEventListener('click', onFirstInteraction);
-  document.addEventListener('touchstart', onFirstInteraction);
-  document.addEventListener('keydown', onFirstInteraction);
+  if (splash) {
+    splash.addEventListener('click', dismissSplash);
+    splash.addEventListener('touchstart', dismissSplash);
+  }
 
   // Music button
   function bindMusicBtn() {
