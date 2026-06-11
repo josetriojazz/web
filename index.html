@@ -1339,8 +1339,16 @@
       musicPlaying = true;
       fadeIn();
       updateMusicBtn(true);
-    }).catch(() => {});
+    }).catch(() => {
+      // Blocked by browser — will retry on first interaction
+      musicStarted = false;
+    });
   }
+
+  // Try autoplay immediately on page load
+  window.addEventListener('load', () => {
+    startMusic();
+  });
 
   function toggleMusic() {
     if (!musicStarted) { startMusic(); return; }
