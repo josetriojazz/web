@@ -1,0 +1,1238 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jose Trio Jazz</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Space+Mono:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --black: #0a0804;
+    --deep: #110e08;
+    --amber: #c8933a;
+    --gold: #e8b84b;
+    --cream: #f0e8d4;
+    --warm: #d4c4a0;
+    --smoke: #2a2318;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--black);
+    color: var(--cream);
+    font-family: 'Cormorant Garamond', serif;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* Custom cursor */
+  .cursor {
+    width: 8px; height: 8px;
+    background: var(--gold);
+    border-radius: 50%;
+    position: fixed;
+    top: 0; left: 0;
+    pointer-events: none;
+    z-index: 9999;
+    transition: transform 0.1s ease;
+    mix-blend-mode: difference;
+  }
+  .cursor-ring {
+    width: 36px; height: 36px;
+    border: 1px solid var(--amber);
+    border-radius: 50%;
+    position: fixed;
+    top: 0; left: 0;
+    pointer-events: none;
+    z-index: 9998;
+    transition: transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94), width 0.3s, height 0.3s, opacity 0.3s;
+    opacity: 0.6;
+  }
+
+  /* Grain overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 1000;
+    opacity: 0.35;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    padding: 28px 48px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: linear-gradient(to bottom, rgba(10,8,4,0.95) 0%, transparent 100%);
+  }
+
+  .nav-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 40px;
+    list-style: none;
+  }
+
+  .nav-links a {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--warm);
+    text-decoration: none;
+    transition: color 0.3s;
+    position: relative;
+  }
+
+  .nav-links a::after {
+    content: '';
+    position: absolute;
+    bottom: -4px; left: 0; right: 100%;
+    height: 1px;
+    background: var(--gold);
+    transition: right 0.3s ease;
+  }
+
+  .nav-links a:hover { color: var(--gold); }
+  .nav-links a:hover::after { right: 0; }
+
+  /* HERO */
+  .hero {
+    height: 100vh;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  .hero-bg {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 60% 80% at 30% 50%, rgba(200,147,58,0.12) 0%, transparent 60%),
+      radial-gradient(ellipse 40% 60% at 75% 30%, rgba(232,184,75,0.06) 0%, transparent 50%),
+      radial-gradient(ellipse 80% 50% at 50% 100%, rgba(42,35,24,0.8) 0%, transparent 60%),
+      var(--black);
+  }
+
+  /* Animated lines */
+  .lines {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+  }
+
+  .line {
+    position: absolute;
+    width: 1px;
+    background: linear-gradient(to bottom, transparent, rgba(200,147,58,0.15), transparent);
+    animation: lineFloat linear infinite;
+  }
+
+  @keyframes lineFloat {
+    from { transform: translateY(-100%); opacity: 0; }
+    10% { opacity: 1; }
+    90% { opacity: 1; }
+    to { transform: translateY(100vh); opacity: 0; }
+  }
+
+  .hero-content {
+    text-align: center;
+    position: relative;
+    z-index: 2;
+    animation: heroIn 1.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  @keyframes heroIn {
+    from { opacity: 0; transform: translateY(40px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .hero-eyebrow {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.5em;
+    text-transform: uppercase;
+    color: var(--amber);
+    margin-bottom: 24px;
+    animation: heroIn 1.6s 0.2s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  .hero-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(5rem, 14vw, 11rem);
+    font-weight: 900;
+    line-height: 0.88;
+    letter-spacing: -0.02em;
+    margin-bottom: 8px;
+  }
+
+  .hero-title span {
+    display: block;
+    background: linear-gradient(135deg, var(--cream) 0%, var(--gold) 40%, var(--amber) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero-title em {
+    display: block;
+    font-style: italic;
+    font-size: 0.55em;
+    color: var(--amber);
+    -webkit-text-fill-color: var(--amber);
+    background: none;
+    letter-spacing: 0.08em;
+    margin-top: 4px;
+  }
+
+  .hero-sub {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.25rem;
+    font-style: italic;
+    color: var(--warm);
+    margin-top: 32px;
+    letter-spacing: 0.05em;
+    animation: heroIn 1.6s 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  .hero-scroll {
+    position: absolute;
+    bottom: 48px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.55rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--amber);
+    animation: fadeUp 1s 1.5s both;
+  }
+
+  .hero-scroll .arrow {
+    width: 1px;
+    height: 48px;
+    background: linear-gradient(to bottom, var(--amber), transparent);
+    animation: scrollPulse 2s ease infinite;
+  }
+
+  @keyframes scrollPulse {
+    0%, 100% { transform: scaleY(1); opacity: 0.6; }
+    50% { transform: scaleY(1.3); opacity: 1; }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateX(-50%) translateY(20px); }
+    to { opacity: 1; transform: translateX(-50%) translateY(0); }
+  }
+
+  /* MARQUEE */
+  .marquee-strip {
+    background: var(--amber);
+    padding: 14px 0;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+
+  .marquee-inner {
+    display: inline-flex;
+    animation: marquee 30s linear infinite;
+  }
+
+  .marquee-item {
+    font-family: 'Playfair Display', serif;
+    font-size: 0.9rem;
+    font-style: italic;
+    color: var(--black);
+    padding: 0 40px;
+    letter-spacing: 0.05em;
+  }
+
+  .marquee-dot {
+    color: var(--deep);
+    padding: 0 10px;
+  }
+
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+
+  /* SECTIONS */
+  section {
+    padding: 120px 48px;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .section-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--amber);
+    margin-bottom: 60px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .section-label::after {
+    content: '';
+    height: 1px;
+    width: 60px;
+    background: var(--amber);
+  }
+
+  /* ABOUT */
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+  }
+
+  .about-visual {
+    position: relative;
+  }
+
+  .about-frame {
+    width: 100%;
+    aspect-ratio: 3/4;
+    background: var(--smoke);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .about-frame::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at 40% 60%, rgba(200,147,58,0.25) 0%, transparent 60%),
+      linear-gradient(160deg, var(--smoke) 0%, #1a1510 100%);
+  }
+
+  /* Piano keys decoration */
+  .string-display {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    justify-content: center;
+    gap: 22px;
+    padding: 20px 40px;
+  }
+
+  .string-line {
+    width: 1px;
+    background: linear-gradient(to bottom, transparent, rgba(200,147,58,0.35), rgba(232,184,75,0.5), rgba(200,147,58,0.35), transparent);
+    flex-shrink: 0;
+    animation: stringVibrate 3s ease-in-out infinite;
+  }
+
+  .string-line:nth-child(2) { animation-delay: 0.4s; }
+  .string-line:nth-child(3) { animation-delay: 0.8s; }
+  .string-line:nth-child(4) { animation-delay: 1.2s; }
+
+  @keyframes stringVibrate {
+    0%, 100% { transform: scaleX(1); opacity: 0.4; }
+    50% { transform: scaleX(2.5); opacity: 0.7; }
+  }
+
+  .string-fret {
+    position: absolute;
+    left: 20px; right: 20px;
+    top: 20%;
+    height: 1px;
+    background: linear-gradient(to right, transparent, rgba(200,147,58,0.2), transparent);
+  }
+
+  .note-symbol {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -60%);
+    font-size: 7rem;
+    color: var(--amber);
+    opacity: 0.2;
+    font-family: serif;
+    line-height: 1;
+    animation: notePulse 4s ease-in-out infinite;
+  }
+
+  @keyframes notePulse {
+    0%, 100% { opacity: 0.15; transform: translate(-50%, -60%) scale(1); }
+    50% { opacity: 0.3; transform: translate(-50%, -62%) scale(1.05); }
+  }
+
+  .about-accent {
+    position: absolute;
+    top: -20px;
+    right: -20px;
+    width: 80px;
+    height: 80px;
+    border: 1px solid var(--amber);
+    opacity: 0.4;
+  }
+
+  .about-year {
+    position: absolute;
+    bottom: 20px;
+    right: -30px;
+    font-family: 'Playfair Display', serif;
+    font-size: 6rem;
+    font-weight: 900;
+    color: var(--amber);
+    opacity: 0.08;
+    line-height: 1;
+    writing-mode: vertical-rl;
+  }
+
+  .about-text h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.5rem, 4vw, 4rem);
+    font-weight: 700;
+    line-height: 1.1;
+    margin-bottom: 32px;
+    color: var(--cream);
+  }
+
+  .about-text h2 em {
+    font-style: italic;
+    color: var(--gold);
+  }
+
+  .about-text p {
+    font-size: 1.2rem;
+    line-height: 1.8;
+    color: var(--warm);
+    margin-bottom: 20px;
+    font-weight: 300;
+  }
+
+  .divider {
+    width: 60px;
+    height: 1px;
+    background: linear-gradient(to right, var(--amber), transparent);
+    margin: 32px 0;
+  }
+
+  .stats-row {
+    display: flex;
+    gap: 48px;
+    margin-top: 48px;
+  }
+
+  .stat {
+    text-align: center;
+  }
+
+  .stat-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.8rem;
+    font-weight: 900;
+    color: var(--gold);
+    line-height: 1;
+  }
+
+  .stat-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.55rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--warm);
+    margin-top: 6px;
+  }
+
+  /* MUSIC / REPERTOIRE */
+  .music-section {
+    background: var(--deep);
+    padding: 120px 0;
+    margin: 0;
+    max-width: none;
+  }
+
+  .music-inner {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 48px;
+  }
+
+  .music-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+    margin-top: 60px;
+  }
+
+  .music-card {
+    background: var(--smoke);
+    padding: 48px 40px;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    cursor: none;
+  }
+
+  .music-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(200,147,58,0.1) 0%, transparent 60%);
+    opacity: 0;
+    transition: opacity 0.4s;
+  }
+
+  .music-card:hover { transform: translateY(-4px); }
+  .music-card:hover::before { opacity: 1; }
+
+  .music-card-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 5rem;
+    font-weight: 900;
+    color: var(--amber);
+    opacity: 0.1;
+    line-height: 1;
+    margin-bottom: -16px;
+  }
+
+  .music-card-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem;
+    font-style: italic;
+    color: var(--cream);
+    margin-bottom: 16px;
+  }
+
+  .music-card-desc {
+    font-size: 1rem;
+    line-height: 1.7;
+    color: var(--warm);
+    font-weight: 300;
+  }
+
+  .music-card-icon {
+    position: absolute;
+    top: 32px;
+    right: 32px;
+    font-size: 1.5rem;
+    opacity: 0.3;
+  }
+
+  /* Repertoire list */
+  .repertoire-list {
+    margin-top: 60px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+  }
+
+  .rep-item {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    padding: 28px 32px;
+    border-bottom: 1px solid rgba(200,147,58,0.1);
+    border-right: 1px solid rgba(200,147,58,0.08);
+    transition: all 0.35s cubic-bezier(0.16,1,0.3,1);
+    cursor: none;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .rep-item::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 0;
+    background: linear-gradient(to right, rgba(200,147,58,0.08), transparent);
+    transition: width 0.4s ease;
+  }
+
+  .rep-item:hover::before { width: 100%; }
+
+  .rep-item:nth-child(even) { border-right: none; }
+
+  .rep-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    font-weight: 900;
+    color: var(--amber);
+    opacity: 0.2;
+    line-height: 1;
+    flex-shrink: 0;
+    width: 44px;
+    transition: opacity 0.3s;
+  }
+
+  .rep-item:hover .rep-num { opacity: 0.6; }
+
+  .rep-info { flex: 1; }
+
+  .rep-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.45rem;
+    font-style: italic;
+    color: var(--cream);
+    line-height: 1.2;
+    margin-bottom: 4px;
+  }
+
+  .rep-composer {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.58rem;
+    letter-spacing: 0.15em;
+    color: var(--warm);
+    opacity: 0.7;
+    text-transform: uppercase;
+  }
+
+  .rep-tag {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.55rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--amber);
+    border: 1px solid rgba(200,147,58,0.3);
+    padding: 6px 12px;
+    flex-shrink: 0;
+    transition: all 0.3s;
+  }
+
+  .rep-item:hover .rep-tag {
+    background: rgba(200,147,58,0.1);
+    border-color: var(--amber);
+  }
+
+  @media (max-width: 900px) {
+    .repertoire-list { grid-template-columns: 1fr; }
+    .rep-item { border-right: none; }
+  }
+
+  /* MEMBERS */
+  .members-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 40px;
+    margin-top: 60px;
+  }
+
+  .member-card {
+    position: relative;
+    overflow: hidden;
+    cursor: none;
+  }
+
+  .member-photo {
+    width: 100%;
+    aspect-ratio: 2/3;
+    background: var(--smoke);
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 24px;
+    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .member-card:hover .member-photo { transform: scale(1.02); }
+
+  .member-photo-inner {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .member-silhouette {
+    opacity: 0.3;
+    filter: blur(1px);
+  }
+
+  .member-gradient {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(160deg, transparent 0%, var(--smoke) 100%);
+  }
+
+  /* Instrument icon styling */
+  .instrument-display {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+  }
+
+  .instrument-icon {
+    font-size: 5rem;
+    opacity: 0.15;
+    margin-bottom: 8px;
+  }
+
+  .instrument-lines {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 60px;
+    background: linear-gradient(to top, rgba(200,147,58,0.15), transparent);
+  }
+
+  .member-instrument {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--amber);
+    margin-bottom: 8px;
+  }
+
+  .member-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem;
+    font-style: italic;
+    color: var(--cream);
+  }
+
+  /* SHOWS */
+  .shows-section {
+    border-top: 1px solid rgba(200,147,58,0.2);
+  }
+
+  .show-list {
+    margin-top: 60px;
+  }
+
+  .show-item {
+    display: grid;
+    grid-template-columns: 120px 1fr 1fr auto;
+    align-items: center;
+    gap: 40px;
+    padding: 32px 0;
+    border-bottom: 1px solid rgba(200,147,58,0.1);
+    transition: all 0.3s;
+    cursor: none;
+  }
+
+  .show-item:hover {
+    padding-left: 16px;
+    border-bottom-color: rgba(200,147,58,0.4);
+  }
+
+  .show-date {
+    text-align: center;
+  }
+
+  .show-day {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.4rem;
+    font-weight: 700;
+    color: var(--gold);
+    line-height: 1;
+  }
+
+  .show-month {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--amber);
+  }
+
+  .show-venue {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    font-style: italic;
+    color: var(--cream);
+  }
+
+  .show-city {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    color: var(--warm);
+    margin-top: 4px;
+  }
+
+  .show-time {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
+    color: var(--warm);
+  }
+
+  .show-btn {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    text-decoration: none;
+    border: 1px solid rgba(200,147,58,0.4);
+    padding: 10px 20px;
+    transition: all 0.3s;
+  }
+
+  .show-btn:hover {
+    background: var(--amber);
+    color: var(--black);
+    border-color: var(--amber);
+  }
+
+  /* CONTACT / CTA */
+  .cta-section {
+    background: var(--smoke);
+    text-align: center;
+    padding: 140px 48px;
+    max-width: none;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .cta-section::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 80% 80% at 50% 50%, rgba(200,147,58,0.08) 0%, transparent 70%);
+  }
+
+  .cta-inner {
+    position: relative;
+    z-index: 1;
+    max-width: 700px;
+    margin: 0 auto;
+  }
+
+  .cta-section h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(3rem, 6vw, 5.5rem);
+    font-weight: 900;
+    line-height: 1.05;
+    margin-bottom: 24px;
+    color: var(--cream);
+  }
+
+  .cta-section h2 em {
+    font-style: italic;
+    color: var(--gold);
+  }
+
+  .cta-section p {
+    font-size: 1.2rem;
+    color: var(--warm);
+    margin-bottom: 48px;
+    font-weight: 300;
+    line-height: 1.7;
+  }
+
+  .cta-buttons {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .btn-primary {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--black);
+    background: var(--gold);
+    text-decoration: none;
+    padding: 18px 40px;
+    transition: all 0.3s;
+    display: inline-block;
+  }
+
+  .btn-primary:hover {
+    background: var(--amber);
+    transform: translateY(-2px);
+  }
+
+  .btn-secondary {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    background: transparent;
+    text-decoration: none;
+    padding: 17px 40px;
+    border: 1px solid rgba(232,184,75,0.5);
+    transition: all 0.3s;
+    display: inline-block;
+  }
+
+  .btn-secondary:hover {
+    border-color: var(--gold);
+    transform: translateY(-2px);
+  }
+
+  /* FOOTER */
+  footer {
+    background: var(--black);
+    padding: 60px 48px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid rgba(200,147,58,0.15);
+  }
+
+  .footer-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    font-weight: 900;
+    color: var(--gold);
+    letter-spacing: 0.05em;
+  }
+
+  .footer-logo span {
+    display: block;
+    font-size: 0.7rem;
+    font-family: 'Space Mono', monospace;
+    font-weight: 400;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--amber);
+    margin-top: 4px;
+  }
+
+  .footer-social {
+    display: flex;
+    gap: 24px;
+  }
+
+  .footer-social a {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--warm);
+    text-decoration: none;
+    transition: color 0.3s;
+  }
+
+  .footer-social a:hover { color: var(--gold); }
+
+  .footer-copy {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.55rem;
+    color: rgba(200,180,160,0.3);
+    letter-spacing: 0.1em;
+  }
+
+  /* SCROLL ANIMATIONS */
+  .reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1), transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .reveal.visible {
+    opacity: 1;
+    transform: none;
+  }
+
+  .reveal-delay-1 { transition-delay: 0.1s; }
+  .reveal-delay-2 { transition-delay: 0.2s; }
+  .reveal-delay-3 { transition-delay: 0.3s; }
+
+  /* Responsive */
+  @media (max-width: 900px) {
+    nav { padding: 20px 24px; }
+    .nav-links { gap: 20px; }
+    section { padding: 80px 24px; }
+    .about-grid { grid-template-columns: 1fr; gap: 48px; }
+    .music-grid { grid-template-columns: 1fr; }
+    .members-grid { grid-template-columns: 1fr; gap: 32px; }
+    .show-item { grid-template-columns: 80px 1fr auto; gap: 16px; }
+    .show-time { display: none; }
+    .cta-section { padding: 100px 24px; }
+    footer { flex-direction: column; gap: 24px; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">Jose Trio Jazz</div>
+  <ul class="nav-links">
+    <li><a href="#about">Nosotros</a></li>
+    <li><a href="#music">Música</a></li>
+    <li><a href="#contact">Contacto</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="home">
+  <div class="hero-bg"></div>
+  <div class="lines" id="lines"></div>
+  <div class="hero-content">
+    <p class="hero-eyebrow">Est. Jazz Trio</p>
+    <h1 class="hero-title">
+      <span>Jose</span>
+      <em>Trio Jazz</em>
+    </h1>
+    <p class="hero-sub">Laúd · Guitarra · Contrabajo</p>
+  </div>
+  <div class="hero-scroll">
+    <div class="arrow"></div>
+    <span>Scroll</span>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-strip">
+  <div class="marquee-inner">
+    <span class="marquee-item">Autumn Leaves</span><span class="marquee-dot">◆</span>
+    <span class="marquee-item">All of Me</span><span class="marquee-dot">◆</span>
+    <span class="marquee-item">Wave</span><span class="marquee-dot">◆</span>
+    <span class="marquee-item">Blue Bossa</span><span class="marquee-dot">◆</span>
+    <span class="marquee-item">Minor Swing</span><span class="marquee-dot">◆</span>
+    <span class="marquee-item">Take Five</span><span class="marquee-dot">◆</span>
+    <span class="marquee-item">Bag's Groove</span><span class="marquee-dot">◆</span>
+    <span class="marquee-item">The Chicken</span><span class="marquee-dot">◆</span>
+    <span class="marquee-item">Autumn Leaves</span><span class="marquee-dot">◆</span>
+    <span class="marquee-item">All of Me</span><span class="marquee-dot">◆</span>
+    <span class="marquee-item">Wave</span><span class="marquee-dot">◆</span>
+    <span class="marquee-item">Blue Bossa</span><span class="marquee-dot">◆</span>
+    <span class="marquee-item">Minor Swing</span><span class="marquee-dot">◆</span>
+    <span class="marquee-item">Take Five</span><span class="marquee-dot">◆</span>
+    <span class="marquee-item">Bag's Groove</span><span class="marquee-dot">◆</span>
+    <span class="marquee-item">The Chicken</span><span class="marquee-dot">◆</span>
+  </div>
+</div>
+
+<!-- ABOUT -->
+<section id="about">
+  <p class="section-label reveal">Acerca del Trío</p>
+  <div class="about-grid">
+    <div class="about-visual reveal">
+      <div class="about-frame">
+        <div class="note-symbol">♪</div>
+        <div class="string-display">
+          <div class="string-line"></div>
+          <div class="string-line"></div>
+          <div class="string-line"></div>
+          <div class="string-line"></div>
+          <div class="string-fret"></div>
+          <div class="string-fret" style="top:35%"></div>
+          <div class="string-fret" style="top:60%"></div>
+          <div class="string-fret" style="top:80%"></div>
+        </div>
+        <div class="about-accent"></div>
+      </div>
+      <div class="about-year">JAZZ</div>
+    </div>
+    <div class="about-text">
+      <h2 class="reveal">Un sonido que <em>te mueve,</em> te hace sentir.</h2>
+      <div class="divider reveal"></div>
+      <p class="reveal">Tres cuerdas, una sola voz. El Jose Trio Jazz une el laúd, la guitarra y el contrabajo en una conversación musical profunda, íntima y llena de vida — donde cada nota es una decisión, y cada silencio tiene significado.</p>
+      <p class="reveal reveal-delay-1">Desde los estándares clásicos del jazz hasta ritmos de bossa nova, blues y música contemporánea, el trío explora el lenguaje del jazz con pasión, creatividad y una conexión musical única entre sus tres instrumentos de cuerda.</p>
+      <div class="stats-row reveal reveal-delay-2">
+        <div class="stat">
+          <div class="stat-num">3</div>
+          <div class="stat-label">Músicos</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num">∞</div>
+          <div class="stat-label">Repertorio</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num">100%</div>
+          <div class="stat-label">En Vivo</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MUSIC / REPERTOIRE -->
+<div class="music-section" id="music">
+  <div class="music-inner">
+    <p class="section-label reveal">Repertorio</p>
+    <div class="repertoire-list">
+      <div class="rep-item reveal">
+        <span class="rep-num">01</span>
+        <div class="rep-info">
+          <h3 class="rep-title">Autumn Leaves</h3>
+          <p class="rep-composer">Joseph Kosma · Jazz Standard</p>
+        </div>
+        <span class="rep-tag">Standard</span>
+      </div>
+      <div class="rep-item reveal">
+        <span class="rep-num">02</span>
+        <div class="rep-info">
+          <h3 class="rep-title">All of Me</h3>
+          <p class="rep-composer">Gerald Marks &amp; Seymour Simons · Jazz Standard</p>
+        </div>
+        <span class="rep-tag">Standard</span>
+      </div>
+      <div class="rep-item reveal">
+        <span class="rep-num">03</span>
+        <div class="rep-info">
+          <h3 class="rep-title">Wave</h3>
+          <p class="rep-composer">Antonio Carlos Jobim · Bossa Nova</p>
+        </div>
+        <span class="rep-tag">Bossa Nova</span>
+      </div>
+      <div class="rep-item reveal">
+        <span class="rep-num">04</span>
+        <div class="rep-info">
+          <h3 class="rep-title">Blue Bossa</h3>
+          <p class="rep-composer">Kenny Dorham · Latin Jazz</p>
+        </div>
+        <span class="rep-tag">Latin Jazz</span>
+      </div>
+      <div class="rep-item reveal">
+        <span class="rep-num">05</span>
+        <div class="rep-info">
+          <h3 class="rep-title">Minor Swing</h3>
+          <p class="rep-composer">Django Reinhardt &amp; Stéphane Grappelli · Gypsy Jazz</p>
+        </div>
+        <span class="rep-tag">Gypsy Jazz</span>
+      </div>
+      <div class="rep-item reveal">
+        <span class="rep-num">06</span>
+        <div class="rep-info">
+          <h3 class="rep-title">Take Five</h3>
+          <p class="rep-composer">Paul Desmond · Cool Jazz</p>
+        </div>
+        <span class="rep-tag">Cool Jazz</span>
+      </div>
+      <div class="rep-item reveal">
+        <span class="rep-num">07</span>
+        <div class="rep-info">
+          <h3 class="rep-title">Bag's Groove</h3>
+          <p class="rep-composer">Milt Jackson · Hard Bop</p>
+        </div>
+        <span class="rep-tag">Hard Bop</span>
+      </div>
+      <div class="rep-item reveal">
+        <span class="rep-num">08</span>
+        <div class="rep-info">
+          <h3 class="rep-title">The Chicken</h3>
+          <p class="rep-composer">Pee Wee Ellis · Funk Jazz</p>
+        </div>
+        <span class="rep-tag">Funk Jazz</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+<!-- CTA / CONTACT -->
+<div class="cta-section" id="contact">
+  <div class="cta-inner">
+    <h2 class="reveal">¿Listo para una noche <em>inolvidable?</em></h2>
+    <p class="reveal">Contrátanos para tu evento, festival, boda, celebración corporativa o experiencia privada. El jazz acústico de cuerda transforma cualquier espacio en un momento memorable.</p>
+    <div class="cta-buttons reveal">
+      <a href="mailto:josetriojazz@gmail.com" class="btn-primary">Contáctanos</a>
+      <a href="https://www.instagram.com/josetriojazz" target="_blank" class="btn-secondary">Instagram</a>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">
+    Jose Trio Jazz
+    <span>Laúd · Guitarra · Contrabajo</span>
+  </div>
+  <div class="footer-social">
+    <a href="https://www.instagram.com/josetriojazz" target="_blank">Instagram</a>
+    <a href="mailto:josetriojazz@gmail.com">Email</a>
+  </div>
+  <div class="footer-copy">© 2026 Jose Trio Jazz</div>
+</footer>
+
+<script>
+  // Custom cursor
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursorRing');
+  let mouseX = 0, mouseY = 0;
+  let ringX = 0, ringY = 0;
+
+  document.addEventListener('mousemove', e => {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+    cursor.style.transform = `translate(${mouseX - 4}px, ${mouseY - 4}px)`;
+  });
+
+  function animateRing() {
+    ringX += (mouseX - ringX) * 0.12;
+    ringY += (mouseY - ringY) * 0.12;
+    ring.style.transform = `translate(${ringX - 18}px, ${ringY - 18}px)`;
+    requestAnimationFrame(animateRing);
+  }
+  animateRing();
+
+  // Interactive cursor on hover
+  document.querySelectorAll('a, button, .music-card, .show-item, .member-card').forEach(el => {
+    el.addEventListener('mouseenter', () => {
+      ring.style.width = '60px';
+      ring.style.height = '60px';
+      ring.style.opacity = '0.3';
+    });
+    el.addEventListener('mouseleave', () => {
+      ring.style.width = '36px';
+      ring.style.height = '36px';
+      ring.style.opacity = '0.6';
+    });
+  });
+
+  // Animated background lines
+  const linesContainer = document.getElementById('lines');
+  for (let i = 0; i < 12; i++) {
+    const line = document.createElement('div');
+    line.className = 'line';
+    const left = 5 + (i * 8.5);
+    const dur = 8 + Math.random() * 14;
+    const delay = Math.random() * 12;
+    const h = 60 + Math.random() * 40;
+    line.style.cssText = `left:${left}%;height:${h}%;animation-duration:${dur}s;animation-delay:-${delay}s;`;
+    linesContainer.appendChild(line);
+  }
+
+  // Scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+  reveals.forEach(el => obs.observe(el));
+</script>
+</body>
+</html>
