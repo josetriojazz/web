@@ -1395,6 +1395,9 @@
   const audio = new Audio(audioSrc);
   audio.loop = true;
   audio.volume = 0;
+  audio.preload = 'auto';
+  audio.setAttribute('playsinline', '');
+  audio.setAttribute('webkit-playsinline', '');
 
   let musicPlaying = false;
   let musicStarted = false;
@@ -1453,17 +1456,25 @@
     btn.title = playing ? 'Pausar música' : 'Reproducir música';
   }
 
-  // Splash screen — click to enter and start music
+  // Splash screen — tap/click to enter and start music
   const splash = document.getElementById('splash');
-  function dismissSplash() {
+  function dismissSplash(e) {
+    e.preventDefault();
     splash.classList.add('hidden');
-    startMusic();
+    // Call play() synchronously inside the user gesture handler
+    audio.volume = 0;
+    audio.play().then(() => {
+      musicStarted = true;
+      musicPlaying = true;
+      fadeIn();
+      updateMusicBtn(true);
+    }).catch(() => {});
     splash.removeEventListener('click', dismissSplash);
-    splash.removeEventListener('touchstart', dismissSplash);
+    splash.removeEventListener('touchend', dismissSplash);
   }
   if (splash) {
     splash.addEventListener('click', dismissSplash);
-    splash.addEventListener('touchstart', dismissSplash);
+    splash.addEventListener('touchend', dismissSplash);
   }
 
   // Music button
